@@ -82,4 +82,4 @@ jobs:
           DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByAttribute='Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute'
 
       - name: End SonarQube Scan    
-        run: ./.sonar/scanner/dotnet-sonarscanner end -d:sonar.login="${{ env.SONAR_TOKEN }}"
+        run: ./.sonar/scanner/dotnet-sonarscanner end -d:sonar.login='${{ secrets.SONAR_TOKEN }}'
