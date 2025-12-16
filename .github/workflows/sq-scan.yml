@@ -13,9 +13,7 @@ defaults:
 jobs:
   sq-scan:
     name: SonarQube Scan
-    runs-on: ubuntu-latest
-    env:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    runs-on: ubuntu-latest    
     steps:
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -49,6 +47,8 @@ jobs:
           dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
 
       - name: Start SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: >
           ./.sonar/scanner/dotnet-sonarscanner begin
           -o:batizar
@@ -83,5 +83,7 @@ jobs:
           DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude='[xunit*]*,[*.Tests]*,[*.UnitTest]*,[*]*.Swagger.*'         
           DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByAttribute='Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute'
 
-      - name: End SonarQube Scan    
+      - name: End SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  
         run: ./.sonar/scanner/dotnet-sonarscanner end -d:sonar.login='$SONAR_TOKEN'
