@@ -2,8 +2,18 @@
 
 # This stage is used when running from VS in fast mode (Default for Debug configuration)
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
-USER $APP_UID
+
+# Create a non-root user and group to run the app
+ARG APP_USER=app
+ARG APP_UID=1000
+ARG APP_GID=1000
+RUN groupadd -g ${APP_GID} ${APP_USER} \
+    && useradd -u ${APP_UID} -g ${APP_GID} -s /sbin/nologin -M ${APP_USER} || true
+
 WORKDIR /app
+RUN mkdir -p /app && chown ${APP_USER}:${APP_USER} /app
+USER ${APP_USER}
+
 EXPOSE 8080
 EXPOSE 8081
 
@@ -14,7 +24,8 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Mrtc.Test.Api/Mrtc.Test.Api.csproj", "Mrtc.Test.Api/"]
 RUN dotnet restore "./Mrtc.Test.Api/Mrtc.Test.Api.csproj"
-COPY . .
+# Copy only the service project files instead of the entire context to avoid leaking sensitive files
+COPY ["Mrtc.Test.Api/", "Mrtc.Test.Api/"]
 WORKDIR "/src/Mrtc.Test.Api"
 RUN dotnet build "./Mrtc.Test.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
@@ -26,5 +37,6 @@ RUN dotnet publish "./Mrtc.Test.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publ
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+# ensure files copied into the image are owned by the non-root user
+COPY --from=publish --chown=app:app /app/publish .
 ENTRYPOINT ["dotnet", "Mrtc.Test.Api.dll"]
