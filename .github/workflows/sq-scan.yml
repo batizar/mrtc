@@ -78,8 +78,7 @@ jobs:
           --collect "XPlat Code Coverage"
           -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
           DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Include='[*]*'
-          DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude='[xunit*]*,[*.Tests]*,[*.UnitTest]*,[*]*.Swagger.*'
-          DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile='**/Program.cs'          
+          DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude='[xunit*]*,[*.Tests]*,[*.UnitTest]*,[*]*.Swagger.*'         
           DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByAttribute='Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute'
 
       - name: End SonarQube Scan    
