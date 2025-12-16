@@ -17,7 +17,6 @@ USER ${APP_USER}
 EXPOSE 8080
 EXPOSE 8081
 
-
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
@@ -36,7 +35,10 @@ RUN dotnet publish "./Mrtc.Test.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publ
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
+ARG APP_USER=app
 WORKDIR /app
 # ensure files copied into the image are owned by the non-root user
-COPY --from=publish --chown=app:app /app/publish .
+COPY --from=publish --chown=${APP_USER}:${APP_USER} /app/publish .
+# Explicitly run as non-root user in final stage
+USER ${APP_USER}
 ENTRYPOINT ["dotnet", "Mrtc.Test.Api.dll"]

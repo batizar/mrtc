@@ -14,6 +14,8 @@ jobs:
   sq-scan:
     name: SonarQube Scan
     runs-on: ubuntu-latest
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     steps:
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -52,7 +54,7 @@ jobs:
           -o:batizar
           -k:batizar_mrtc
           -n:batizar_mrtc
-          -d:sonar.login='${{ secrets.SONAR_TOKEN }}'
+          -d:sonar.login='$SONAR_TOKEN'
           -d:sonar.dotnet.excludeTestProjects=true
           -d:sonar.cs.vstest.reportsPaths='TestResults/*.trx'
           -d:sonar.cs.opencover.reportsPaths='**/coverage.opencover.xml'
@@ -82,4 +84,4 @@ jobs:
           DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByAttribute='Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute'
 
       - name: End SonarQube Scan    
-        run: ./.sonar/scanner/dotnet-sonarscanner end -d:sonar.login='${{ secrets.SONAR_TOKEN }}'
+        run: ./.sonar/scanner/dotnet-sonarscanner end -d:sonar.login='$SONAR_TOKEN'
