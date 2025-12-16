@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".dockerignore" />
+    <File Path=".github/workflows/sq-scan.yml" />
+    <File Path=".gitignore" />
+    <File Path="CODEOWNERS" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Mrtc.Test.Api/Mrtc.Test.Api.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Mrtc.Test.Api.UnitTest/Mrtc.Test.Api.UnitTest.csproj" Id="12bdefcf-0eed-4958-af02-3fab4584fcc7" />
+  </Folder>
+</Solution>

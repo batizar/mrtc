@@ -1,0 +1,89 @@
+name: sq-scan
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  sq-scan:
+    name: SonarQube Scan
+    runs-on: ubuntu-latest    
+    steps:
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: 'zulu'
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Cache SonarQube Packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache SonarQube Scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v4
+        with:
+          path: ./.sonar/scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+
+      - name: Install SonarQube Scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ./.sonar/scanner
+          dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
+
+      - name: Start SonarQube Scan
+        env:
+          SONAR_SECRET: ${{ secrets.SONAR_TOKEN }}
+        run: >
+          ./.sonar/scanner/dotnet-sonarscanner begin
+          -o:batizar
+          -k:batizar_mrtc
+          -n:batizar_mrtc
+          -d:sonar.login="$SONAR_SECRET"
+          -d:sonar.dotnet.excludeTestProjects=true
+          -d:sonar.cs.vstest.reportsPaths='TestResults/*.trx'
+          -d:sonar.cs.opencover.reportsPaths='**/coverage.opencover.xml'
+          -d:sonar.exclusions='test/**/*,tests/**/*'
+          -d:sonar.coverage.exclusions='test/**/*,tests/**/*'
+          -d:sonar.cpd.exclusions='test/**/*,tests/**/*'
+
+      - name: Restore Projects
+        run: dotnet restore ${{ inputs.projects }}        
+
+      - name: Build Projects
+        run: dotnet build ${{ inputs.projects }} --configuration Release --no-restore
+
+      - name: Test Projects
+        id: test
+        run: >
+          dotnet test ${{ inputs.projects }}
+          --configuration Release
+          --no-build
+          --no-restore
+          --logger trx
+          --results-directory TestResults
+          --collect "XPlat Code Coverage"
+          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Include='[*]*'
+          DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude='[xunit*]*,[*.Tests]*,[*.UnitTest]*,[*]*.Swagger.*'         
+          DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByAttribute='Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute'
+
+      - name: End SonarQube Scan
+        env:
+          SONAR_SECRET: ${{ secrets.SONAR_TOKEN }}  
+        run: ./.sonar/scanner/dotnet-sonarscanner end -d:sonar.login="$SONAR_SECRET"
