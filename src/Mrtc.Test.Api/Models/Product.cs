@@ -9,7 +9,7 @@ public class Product : IValidatableObject
 {
     private static readonly JsonSerializerOptions CachedJsonSerializerOptions = new() { PropertyNameCaseInsensitive = true };
 
-    public int Id { get; set; }
+    public int? Id { get; set; }
 
     [Required(ErrorMessage = "Title is required.")]
     public required string Title { get; set; }
@@ -20,11 +20,11 @@ public class Product : IValidatableObject
     [Range(0, double.MaxValue, ErrorMessage = "Price must be greater than 0.")]
     public decimal Price { get; set; }
 
-    public decimal DiscountPercentage { get; set; }
+    public decimal? DiscountPercentage { get; set; }
 
-    public decimal Rating { get; set; }
+    public decimal? Rating { get; set; }
 
-    public int Stock { get; set; }
+    public int? Stock { get; set; }
 
     public string? Brand { get; set; }
 

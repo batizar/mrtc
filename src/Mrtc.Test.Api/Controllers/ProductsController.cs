@@ -19,7 +19,7 @@ public class ProductsController(IProductService productService, ILogger<Products
         try
         {
             var products = _productService.GetAllProducts();
-            logger.LogDebug("Retrieved {ProductCount} {@products}", products.Count(), products);
+            logger.LogDebug("Retrieved {ProductCount} {@Products}", products.Count(), products);
             return Ok(products);
         }
         catch (Exception ex)
@@ -41,7 +41,7 @@ public class ProductsController(IProductService productService, ILogger<Products
                 logger.LogDebug("Product with id {ProductId} not found", id);
                 return NotFound();
             }
-            logger.LogDebug("Retrieved product with id {ProductId}: {@product}", id, product);
+            logger.LogDebug("Retrieved product with id {ProductId}: {@Product}", id, product);
             return Ok(product);
         }
         catch (Exception ex)
@@ -65,12 +65,12 @@ public class ProductsController(IProductService productService, ILogger<Products
         try
         {
             _productService.AddProduct(product);
-            logger.LogDebug("Added new {@product}", product);
+            logger.LogDebug("Added new {@Product}", product);
             return CreatedAtAction(nameof(Get), new { id = product.Id }, product);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error adding new {@product}", product);
+            logger.LogError(ex, "Error adding new {@Product}", product);
             return StatusCode(500, ex.Message);
         }
     }
@@ -89,7 +89,7 @@ public class ProductsController(IProductService productService, ILogger<Products
         try
         {
             _productService.UpdateProduct(id, product);
-            logger.LogDebug("Updated product with id {ProductId} to {@product}", id, product);
+            logger.LogDebug("Updated product with id {ProductId} to {@Product}", id, product);
             return NoContent();
         }
         catch (KeyNotFoundException keyEx)
@@ -99,7 +99,7 @@ public class ProductsController(IProductService productService, ILogger<Products
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error updating product with id {ProductId} and payload {@product}", id, product);
+            logger.LogError(ex, "Error updating product with id {ProductId} and payload {@Product}", id, product);
             return StatusCode(500, ex.Message);
         }
     }
