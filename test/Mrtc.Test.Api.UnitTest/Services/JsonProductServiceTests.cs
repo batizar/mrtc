@@ -127,5 +127,53 @@ namespace Mrtc.Test.Api.UnitTest.Services
             var (service, dir) = fixture.CreateServiceWithJson(malformed);
             Assert.Throws<JsonException>(() => service.GetProductById(1));
         }
+        
+
+        [Fact]
+        public void GetAllProducts_WhenPayloadIsJsonNull_ReturnsEmpty()
+        {
+            var (service, dir) = fixture.CreateServiceWithJson("null");
+            var all = service.GetAllProducts().ToList();
+            Assert.Empty(all);
+        }
+
+        [Fact]
+        public void GetProductById_WhenPayloadIsJsonNull_ReturnsNull()
+        {
+            var (service, dir) = fixture.CreateServiceWithJson("null");
+            var p = service.GetProductById(1);
+            Assert.Null(p);
+        }
+
+        [Fact]
+        public void AddProduct_WhenPayloadIsJsonNull_CreatesAndPersists()
+        {
+            var (service, dir) = fixture.CreateServiceWithJson("null");
+            var prod = new Product { Title = "New", Price = 5 };
+            service.AddProduct(prod);
+
+            var file = Path.Combine(dir, "test_products.json");
+            var json = File.ReadAllText(file);
+            var payload = JsonSerializer.Deserialize<ProductsPayload>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            Assert.NotNull(payload?.Products);
+            Assert.Single(payload.Products);
+            Assert.Equal(1, payload.Products[0].Id);
+            Assert.Equal("New", payload.Products[0].Title);
+        }
+
+        [Fact]
+        public void UpdateProduct_WhenPayloadIsJsonNull_Throws()
+        {
+            var (service, dir) = fixture.CreateServiceWithJson("null");
+            var updated = new Product { Title = "X", Price = 1 };
+            Assert.Throws<KeyNotFoundException>(() => service.UpdateProduct(1, updated));
+        }
+
+        [Fact]
+        public void DeleteProduct_WhenPayloadIsJsonNull_Throws()
+        {
+            var (service, dir) = fixture.CreateServiceWithJson("null");
+            Assert.Throws<KeyNotFoundException>(() => service.DeleteProduct(1));
+        }
     }
 }
