@@ -3,6 +3,7 @@
     <File Path=".dockerignore" />
     <File Path=".github/workflows/sq-scan.yml" />
     <File Path=".gitignore" />
+    <File Path="CODEOWNERS" />
     <File Path="README.md" />
   </Folder>
   <Folder Name="/src/">

@@ -65,6 +65,8 @@ try
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
     });
 
+    builder.Services.AddHealthChecks();
+
     builder.Services
         .AddAuthentication(BasicAuthenticationDefaults.AuthenticationScheme)
         .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(
@@ -99,6 +101,8 @@ try
     app.UseAuthorization();
 
     app.MapControllers();
+
+    app.MapHealthChecks("/health");
 
     await app.RunAsync();
 }
