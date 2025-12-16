@@ -24,7 +24,7 @@ public class BasicAuthenticationHandler(
             return AuthenticateResult.Fail("Missing Authorization Header");
         }
 
-        if (!AuthenticationHeaderValue.TryParse(Request.Headers["Authorization"], out AuthenticationHeaderValue headerValue))
+        if (!AuthenticationHeaderValue.TryParse(Request.Headers.Authorization, out AuthenticationHeaderValue? headerValue))
         {
             return AuthenticateResult.Fail("Invalid Authorization Header format");
         }

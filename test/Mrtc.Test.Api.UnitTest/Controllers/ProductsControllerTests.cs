@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging.Abstractions;
 
 using Mrtc.Test.Api.Controllers;
 using Mrtc.Test.Api.Models;
@@ -25,7 +26,9 @@ namespace Mrtc.Test.Api.UnitTest.Controllers
 
         private static ProductsController CreateController(IProductService svc)
         {
-            var controller = new ProductsController(svc);
+            // provide a logger instance to satisfy the controller constructor
+            var logger = NullLogger<ProductsController>.Instance;
+            var controller = new ProductsController(svc, logger);
             // Ensure model state is clear for tests that rely on validation passing
             controller.ModelState.Clear();
             return controller;

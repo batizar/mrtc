@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 
+using Destructurama.Attributed;
+
 namespace Mrtc.Test.Api.Models;
 
 public class Product : IValidatableObject
@@ -28,8 +30,10 @@ public class Product : IValidatableObject
 
     public string? Category { get; set; }
 
+    [NotLogged]
     public string? Thumbnail { get; set; }
 
+    [NotLogged]
     public List<string>? Images { get; set; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
