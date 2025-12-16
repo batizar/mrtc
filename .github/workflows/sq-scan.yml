@@ -54,7 +54,7 @@ jobs:
           -o:batizar
           -k:batizar_mrtc
           -n:batizar_mrtc
-          -d:sonar.login="$SONAR_SECRET"
+          -d:sonar.token="$SONAR_SECRET"
           -d:sonar.dotnet.excludeTestProjects=true
           -d:sonar.cs.vstest.reportsPaths='TestResults/*.trx'
           -d:sonar.cs.opencover.reportsPaths='**/coverage.opencover.xml'
@@ -86,4 +86,4 @@ jobs:
       - name: End SonarQube Scan
         env:
           SONAR_SECRET: ${{ secrets.SONAR_TOKEN }}  
-        run: ./.sonar/scanner/dotnet-sonarscanner end -d:sonar.login="$SONAR_SECRET"
+        run: ./.sonar/scanner/dotnet-sonarscanner end -d:sonar.token="$SONAR_SECRET"
