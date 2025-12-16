@@ -102,14 +102,14 @@ namespace Mrtc.Test.Api.UnitTest.Services
         public void GetAllProducts_FileMissing_ThrowsException()
         {
             var (service, dir) = fixture.CreateServiceWithoutFile();
-            Assert.Throws<Exception>(() => service.GetAllProducts().ToList());
+            Assert.Throws<FileNotFoundException>(() => service.GetAllProducts().ToList());
         }
 
         [Fact]
         public void GetProductById_FileMissing_ThrowsException()
         {
             var (service, dir) = fixture.CreateServiceWithoutFile();
-            Assert.Throws<Exception>(() => service.GetProductById(1));
+            Assert.Throws<FileNotFoundException>(() => service.GetProductById(1));
         }
 
         [Fact]

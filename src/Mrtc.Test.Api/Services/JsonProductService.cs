@@ -78,7 +78,7 @@ public class JsonProductService : IProductService
     {
         if (!File.Exists(_filePath))
         {
-            throw new Exception("Products file not found.");
+            throw new FileNotFoundException("Products file not found.");
         }
 
         var json = File.ReadAllText(_filePath);

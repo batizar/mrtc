@@ -153,5 +153,67 @@ namespace Mrtc.Test.Api.UnitTest.Controllers
             var notFound = Assert.IsType<NotFoundObjectResult>(result);
             Assert.Contains("not found", notFound.Value?.ToString());
         }
+
+        [Fact]
+        public void Get_WhenServiceThrows_ReturnsInternalServer()
+        {
+            var svc = new StubProductService { OnGetAll = () => throw new Exception("boom-get") };
+            var controller = CreateController(svc);
+
+            var result = controller.Get();
+            var obj = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(500, obj.StatusCode);
+            Assert.Equal("boom-get", obj.Value);
+        }
+
+        [Fact]
+        public void GetById_WhenServiceThrows_ReturnsInternalServer()
+        {
+            var svc = new StubProductService { OnGetById = id => throw new Exception("boom-get-id") };
+            var controller = CreateController(svc);
+
+            var result = controller.Get(1);
+            var obj = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(500, obj.StatusCode);
+            Assert.Equal("boom-get-id", obj.Value);
+        }
+
+        [Fact]
+        public void Post_WhenServiceThrows_ReturnsInternalServer()
+        {
+            var svc = new StubProductService { OnAdd = p => throw new Exception("boom-add") };
+            var controller = CreateController(svc);
+            var prod = new Product { Title = "X", Price = 1 };
+
+            var result = controller.Post(prod);
+            var obj = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(500, obj.StatusCode);
+            Assert.Equal("boom-add", obj.Value);
+        }
+
+        [Fact]
+        public void Put_WhenServiceThrows_ReturnsInternalServer()
+        {
+            var svc = new StubProductService { OnUpdate = (id, p) => throw new Exception("boom-update") };
+            var controller = CreateController(svc);
+            var prod = new Product { Title = "X", Price = 1 };
+
+            var result = controller.Put(1, prod);
+            var obj = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(500, obj.StatusCode);
+            Assert.Equal("boom-update", obj.Value);
+        }
+
+        [Fact]
+        public void Delete_WhenServiceThrows_ReturnsInternalServer()
+        {
+            var svc = new StubProductService { OnDelete = id => throw new Exception("boom-delete") };
+            var controller = CreateController(svc);
+
+            var result = controller.Delete(1);
+            var obj = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(500, obj.StatusCode);
+            Assert.Equal("boom-delete", obj.Value);
+        }
     }
 }

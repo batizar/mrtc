@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
@@ -10,14 +11,12 @@ using Mrtc.Test.Api.Models;
 
 namespace Mrtc.Test.Api.Handlers;
 
+[ExcludeFromCodeCoverage]
 public class BasicAuthenticationHandler(
     IOptionsMonitor<AuthenticationSchemeOptions> options,
     ILoggerFactory logger,
     UrlEncoder encoder) : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
-    // You'll need a user service to validate credentials (e.g., IUserService)
-    // private readonly IUserService _userService;
-
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         if (!Request.Headers.ContainsKey("Authorization"))
@@ -67,7 +66,7 @@ public class BasicAuthenticationHandler(
     
     protected override async Task HandleChallengeAsync(AuthenticationProperties properties)
     {
-        Response.Headers["WWW-Authenticate"] = $"Basic realm=\"{Request.Host}\"";
+        Response.Headers.WWWAuthenticate = $@"Basic realm=""{Request.Host}""";
         await base.HandleChallengeAsync(properties);
     }
 }
